@@ -57,7 +57,7 @@
         <bean id="authn/RemoteUser" parent="shibboleth.AuthenticationFlow"
             p:nonBrowserSupported="false" />
 
-        <bean id="authn/Test" parent="shibboleth.AuthenticationFlow"
+        <bean id="authn/Preauth" parent="shibboleth.AuthenticationFlow"
             p:nonBrowserSupported="false" />
             
         <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
