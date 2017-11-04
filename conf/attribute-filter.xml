@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    This file is an EXAMPLE policy file.  While the policy presented in this 
+    example file is illustrative of some simple cases, it relies on the names of
+    non-existent example services and the example attributes demonstrated in the
+    default attribute-resolver.xml file.
+    
+    Deployers should refer to the documentation for a complete list of components
+    and their options.
+-->
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
+
+    <!-- Release some attributes to an SP. -->
+    <AttributeFilterPolicy id="example1">
+        <PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />
+
+        <AttributeRule attributeID="uid">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        
+		<AttributeRule attributeID="mail">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="surname">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="givenName">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="country">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="preferredLanguage">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="employeeType">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        
+		<AttributeRule attributeID="organization">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        
+    </AttributeFilterPolicy>
+
+
+
+    <!-- Release some attributes to an SP. -->
+    <AttributeFilterPolicy id="tapp_sp">
+		<PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://tapp.frameworks.local:9443/wisp/saml/metadata" />
+            <Rule xsi:type="Requester" value="https://another.example.org/shibboleth" />
+        </PolicyRequirementRule>
+
+        <AttributeRule attributeID="uid">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        
+		<AttributeRule attributeID="mail">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="surname">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="givenName">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="country">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="preferredLanguage">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+
+		<AttributeRule attributeID="employeeType">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        
+		<AttributeRule attributeID="organization">
+			<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        
+    </AttributeFilterPolicy>
+
+    <!-- Release eduPersonAffiliation to two specific SPs. -->
+    <AttributeFilterPolicy id="example2">
+        <PolicyRequirementRule xsi:type="OR">
+            <Rule xsi:type="Requester" value="https://sp.example.org" />
+            <Rule xsi:type="Requester" value="https://another.example.org/shibboleth" />
+        </PolicyRequirementRule>
+
+        <AttributeRule attributeID="eduPersonScopedAffiliation">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+    </AttributeFilterPolicy>
+
+</AttributeFilterPolicyGroup>

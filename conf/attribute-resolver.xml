@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    This file is an EXAMPLE configuration file. While the configuration
+    presented in this example file is semi-functional, it isn't very
+    interesting. It is here only as a starting point for your deployment
+    process.
+    
+    Very few attribute definitions and data connectors are demonstrated,
+    and the data is derived statically from the logged-in username and a
+    static example connector.
+
+    Attribute-resolver-full.xml contains more examples of attributes,
+    encoders, and data connectors. Deployers should refer to the Shibboleth
+    documentation for a complete list of components and their options.
+-->
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+
+    <!-- ========================================== -->
+    <!--      Attribute Definitions                 -->
+    <!-- ========================================== -->
+
+    <!--
+    The EPPN is the "standard" federated username in higher ed.
+    For guidelines on the implementation of this attribute, refer
+    to the Shibboleth and eduPerson documentation. Above all, do
+    not expose a value for this attribute without considering the
+    long term implications. 
+    -->
+    <AttributeDefinition id="eduPersonPrincipalName" xsi:type="Scoped" scope="%{idp.scope}" sourceAttributeID="uid">
+        <Dependency ref="uid" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonPrincipalName" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
+    </AttributeDefinition>
+
+    <!--
+    The uid is the closest thing to a "standard" LDAP attribute
+    representing a local username, but you should generally *never*
+    expose uid to federated services, as it is rarely globally unique.
+    -->
+    <AttributeDefinition id="uid" xsi:type="PrincipalName">
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:uid" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:0.9.2342.19200300.100.1.1" friendlyName="uid" encodeType="false" />
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Simple" id="surname" sourceAttributeID="sn">
+ 		<Dependency ref="shibboleth.AttributeSource.TH" />
+ 		<Dependency ref="shibboleth.AttributeSource.BK" />
+
+		<DisplayName xml:lang="en">Surname</DisplayName>
+		<DisplayName xml:lang="fr">Surnom</DisplayName>
+		<DisplayDescription xml:lang="en">Surname: User's last name</DisplayDescription>
+		<DisplayDescription xml:lang="fr">Surnom: baguette au printemps</DisplayDescription>
+
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:sn" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:2.5.4.4" friendlyName="sn" encodeType="false" />
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Simple" id="givenName" sourceAttributeID="givenName">
+ 		<Dependency ref="shibboleth.AttributeSource.TH" />
+ 		<Dependency ref="shibboleth.AttributeSource.BK" />
+        
+        <DisplayName xml:lang="en">Given Name</DisplayName>
+		<DisplayName xml:lang="fr">Prenom</DisplayName>
+		<DisplayDescription xml:lang="en">Given Name: User's first name</DisplayDescription>
+		<DisplayDescription xml:lang="fr">Surnom: baguette au printemps</DisplayDescription>
+		
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:givenName" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:2.5.4.42" friendlyName="givenName" encodeType="false" />
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Simple" id="country" sourceAttributeID="c">
+ 		<Dependency ref="shibboleth.AttributeSource.TH" />
+ 		<Dependency ref="shibboleth.AttributeSource.BK" />
+        
+        <DisplayName xml:lang="en">Country</DisplayName>
+		<DisplayName xml:lang="fr">le cuntry</DisplayName>
+		<DisplayDescription xml:lang="en">Country code</DisplayDescription>
+		<DisplayDescription xml:lang="fr">Le cuntry code</DisplayDescription>
+		
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:country" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:2.5.6.2" friendlyName="country" encodeType="false" />
+    </AttributeDefinition>
+
+    <AttributeDefinition id="employeeType" xsi:type="Simple" sourceAttributeID="employeeType">
+ 		<Dependency ref="shibboleth.AttributeSource.TH" />
+ 		<Dependency ref="shibboleth.AttributeSource.BK" />
+
+		<DisplayName xml:lang="en">Role</DisplayName>
+		<DisplayName xml:lang="fr">La Rolette</DisplayName>
+		<DisplayDescription xml:lang="en">Role: Users role in OnTrack</DisplayDescription>
+		<DisplayDescription xml:lang="fr">La Rolette: baguette au printemps</DisplayDescription>
+
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:employeeType" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:2.16.840.1.113730.3.1.4" friendlyName="employeeType" encodeType="false" />
+    </AttributeDefinition>
+    
+	<AttributeDefinition id="preferredLanguage" xsi:type="Simple" sourceAttributeID="preferredLanguage">
+ 		<Dependency ref="shibboleth.AttributeSource.TH" />
+ 		<Dependency ref="shibboleth.AttributeSource.BK" />
+
+		<DisplayName xml:lang="en">Preferred Language</DisplayName>
+		<DisplayName xml:lang="fr">Preferred Language</DisplayName>
+		<DisplayDescription xml:lang="en">Preferred Language</DisplayDescription>
+		<DisplayDescription xml:lang="fr">Preferred Language</DisplayDescription>
+
+		<AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:preferredLanguage" encodeType="false" />
+		<AttributeEncoder xsi:type="SAML2String" name="urn:oid:2.16.840.1.113730.3.1.39" friendlyName="preferredLanguage" encodeType="false" />
+    </AttributeDefinition>
+ 
+ 
+ 	<AttributeDefinition id="organization" xsi:type="Simple" sourceAttributeID="o">
+ 		<Dependency ref="shibboleth.AttributeSource.TH" />
+ 		<Dependency ref="shibboleth.AttributeSource.BK" />
+
+ 		<DisplayName xml:lang="en">organization</DisplayName>
+ 		<DisplayName xml:lang="fr">organization</DisplayName>
+ 		<DisplayDescription xml:lang="en">organization aka tenant code</DisplayDescription>
+ 		<DisplayDescription xml:lang="fr">organization</DisplayDescription>
+ 
+ 		<AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:o" encodeType="false" />
+ 		<AttributeEncoder xsi:type="SAML2String" name="urn:oid:2.5.4.10" friendlyName="organization" encodeType="false" />
+    </AttributeDefinition>
+    
+ 
+
+    <!--
+    In the rest of the world, the email address is the standard identifier,
+    despite the problems with that practice. Consider making the EPPN
+    value the same as your official email addresses whenever possible.
+    -->
+    <AttributeDefinition id="mail" xsi:type="Template">
+        <Dependency ref="uid" />
+        <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:mail" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2String" name="urn:oid:0.9.2342.19200300.100.1.3" friendlyName="mail" encodeType="false" />
+        <Template>
+          <![CDATA[
+               ${uid}@example.org
+          ]]>
+        </Template>
+        <SourceAttribute>uid</SourceAttribute>
+    </AttributeDefinition>
+
+    <!--
+    This is an example of an attribute sourced from a data connector.
+    -->
+    <AttributeDefinition id="eduPersonScopedAffiliation" xsi:type="Scoped" scope="%{idp.scope}" sourceAttributeID="affiliation">
+        <Dependency ref="staticAttributes" />
+        <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonScopedAffiliation" encodeType="false" />
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" friendlyName="eduPersonScopedAffiliation" encodeType="false" />
+    </AttributeDefinition>
+
+
+    <!-- ========================================== -->
+    <!--      Data Connectors                       -->
+    <!-- ========================================== -->
+
+    <DataConnector id="staticAttributes" xsi:type="Static">
+        <Attribute id="affiliation">
+            <Value>member</Value>
+        </Attribute>
+    </DataConnector>
+    
+    <DataConnector id="staticFallback" xsi:type="Static">
+        <Attribute id="employeeType">
+            <Value>ASSOCIATE</Value>
+        </Attribute>
+        <Attribute id="givenName">
+            <Value>Default</Value>
+        </Attribute>
+        <Attribute id="sn">
+            <Value>User</Value>
+        </Attribute>
+        <Attribute id="c">
+            <Value>CA</Value>
+        </Attribute>
+        <Attribute id="preferredLanguage">
+            <Value>en</Value>
+        </Attribute>
+        <Attribute id="o">
+            <Value>OT</Value>
+        </Attribute>
+    </DataConnector>
+     
+    <!-- use the TH JNDI , timeout after 3s, if more than 1 row then fail, use a fixed failover -->
+	<DataConnector id="shibboleth.AttributeSource.TH" xsi:type="RelationalDatabase" queryTimeout="3000" multipleResultsIsError="true" activationConditionRef="THActivationCondition">
+		<FailoverDataConnector ref="staticFallback"/>
+		<BeanManagedConnection>shibboleth.DataSource.TH</BeanManagedConnection>
+		<!-- <ContainerManagedConnection resourceName="JNDIConnector"> -->
+		<QueryTemplate>
+		<![CDATA[
+		;with p (user_id, role_cd, name_first, name_last, country_cd, lang, tenant, username) as (
+			select user_id, role_cd, name_first, name_last, 'CA' as country_cd, 'en' as lang, 'TH' as tenant, username 
+			from usr.security_user su
+			inner join location.location l ON l.id = su.home_location_id where su.status_cd='A'
+			union
+			select 1, 'SYS', 'John', 'Doe', 'CA', 'en', 'TH', 'johndoe' 
+		)
+		select * from p where username='$resolutionContext.principal'
+		]]>
+		</QueryTemplate>
+
+		<Column columnName="role_cd" attributeID="employeeType" />
+		<Column columnName="name_first" attributeID="givenName" />
+		<Column columnName="name_last" attributeID="sn" />
+		<Column columnName="country_cd" attributeID="c" />
+		<Column columnName="lang" attributeID="preferredLanguage" />
+		<Column columnName="tenant" attributeID="o" />
+		<ResultCache elementTimeToLive="PT10S"/>
+	</DataConnector>
+	
+	
+	<DataConnector id="shibboleth.AttributeSource.BK" xsi:type="RelationalDatabase" queryTimeout="3000" multipleResultsIsError="true" activationConditionRef="BKActivationCondition">
+		<FailoverDataConnector ref="staticFallback"/>
+		<BeanManagedConnection>shibboleth.DataSource.BK</BeanManagedConnection>
+		<!-- <ContainerManagedConnection resourceName="JNDIConnector"> -->
+		<QueryTemplate>
+		<![CDATA[
+		;with p (user_id, role_cd, name_first, name_last, country_cd, lang, tenant, username) as (
+			select user_id, role_cd, name_first, name_last, 'US' as country_cd, 'en' as lang, 'BK' as tenant, username 
+			from usr.security_user su
+			inner join location.location l ON l.id = su.home_location_id where su.status_cd='A'
+			union
+			select 1, 'SYS', 'John', 'Doe', 'CA', 'en', 'TH', 'johndoe' 
+		)
+		select * from p where username='$resolutionContext.principal'
+		]]>
+		</QueryTemplate>
+
+		<Column columnName="role_cd" attributeID="employeeType" />
+		<Column columnName="name_first" attributeID="givenName" />
+		<Column columnName="name_last" attributeID="sn" />
+		<Column columnName="country_cd" attributeID="c" />
+		<Column columnName="lang" attributeID="preferredLanguage" />
+		<Column columnName="tenant" attributeID="o" />
+		<ResultCache elementTimeToLive="PT10S"/>
+	</DataConnector>
+    
+    
+	<DataConnector id="myDatabase" xsi:type="RelationalDatabase">
+	   <BeanManagedConnection>shibboleth.JPAStorageService.DataSource</BeanManagedConnection>
+	   <QueryTemplate>
+		   <![CDATA[
+		   ;with p (user_id, role_cd, name_first, name_last, email, country_cd, lang, tenant, username) as (
+			 select user_id, role_cd, name_first, name_last, email, 'CA' as country_cd, 'en' as lang, 'TH' as tenant, username from aftims.v_security_user_active 
+			 union
+			 select 1, 'SYS', 'John', 'Doe', 'jdoe@ipsrus.com', 'CA', 'en', 'TH', 'jdoe' 
+			)
+			select * from p where username='$resolutionContext.principal'
+		   ]]>
+	   </QueryTemplate>
+
+		<Column columnName="user_id" attributeID="role_cd" />
+		<Column columnName="role_cd" attributeID="employeeType" />
+		<Column columnName="name_first" attributeID="givenName" />
+		<Column columnName="name_last" attributeID="sn" />
+		<Column columnName="email" attributeID="mail" />
+		<Column columnName="country_cd" attributeID="c" />
+		<Column columnName="lang" attributeID="preferredLanguage" />
+		<Column columnName="tenant" attributeID="o" />
+
+
+	   <ResultCache elementTimeToLive="PT10S"/>
+	</DataConnector>
+
+</AttributeResolver>

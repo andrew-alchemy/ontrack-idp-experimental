@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+  
+	<!-- predicate beans to use in activationConditionRef attributes to activate based on SP -->	
+    <bean id="THActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'https://sp.testshib.org/shibboleth-sp','https://tapp.frameworks.local:9443/wisp/saml/metadata'}}"/>
+    <bean id="BKActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidate="https://sp_for_bk.example.org"/>
+ 
+</beans>
