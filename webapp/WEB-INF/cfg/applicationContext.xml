@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:c="http://www.springframework.org/schema/c"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+		default-lazy-init="true">
+
+	<!-- 
+	  - Tenants
+	  -->
+	<bean id="TenantContextFilter" class="frameworks.web.security.TenantContextFilter">
+		<property name="tenantResolverMap">
+			<map key-type="java.lang.String" value-type="java.lang.String">
+				<!-- Burger King -->
+				<entry value="BK" key="bklink.frameworks.local"/>
+				<!-- Tim Hortons -->
+				<entry value="TH" key="thlink.frameworks.local"/>
+			</map>
+		</property>
+	</bean>
+	
+	
+	<!-- 
+	  - Transaction Management
+	  -->
+	<tx:jta-transaction-manager/>
+
+	<tx:advice id="txAdvice">
+		<tx:attributes>
+			<!-- all methods starting with 'get' are read-only -->
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="read*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="write*" propagation="REQUIRED"/>
+			<tx:method name="delete*" propagation="REQUIRED"/>
+			<!-- other methods use the default transaction settings (see below) -->
+			<tx:method name="*" propagation="SUPPORTS"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 
+	  - Hibernate
+	  -->
+	<bean id="defaultSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" lazy-init="false">
+		<property name="jtaTransactionManager">
+			<jee:jndi-lookup jndi-name="TransactionManager"/>
+		</property>
+		<property name="currentTenantIdentifierResolver">
+			<!-- TODO remove the defaultIdentifier when Tasks and ReloadableMessageDB are tenant aware -->
+			<bean class="frameworks.hibernate.CurrentTenantIdentifierResolverTenantContextImpl"
+					p:defaultIdentifier="TH"/>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.session_factory_name">sfONtrackAUTH</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2012Dialect</prop>
+				<prop key="hibernate.show_sql">yes</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.max_fetch_depth">0</prop>	<!-- KM: NEVER CHANGE THIS.  It can result is huge, redundant data sets from the database. -->
+				<prop key="hibernate.order_updates">true</prop>	<!-- If true, Hibernate orders SQL updates by the primary key value of the items being updated for fewer transaction deadlocks in highly concurrent systems. -->
+				<prop key="hibernate.order_inserts">true</prop>	<!-- If true, Hibernate orders SQL inserts for better faster batch insert operations. -->
+				<prop key="hibernate.jdbc.fetch_size">50</prop>
+				<prop key="hibernate.jdbc.batch_size">50</prop>
+				<prop key="hibernate.jdbc.use_scrollable_resultset">false</prop>
+				<prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+				<prop key="hibernate.connection.provider_class">org.hibernate.connection.DatasourceConnectionProvider</prop>
+				<prop key="hibernate.connection.isolation">4096</prop>
+				<prop key="hibernate.bytecode.provider">javassist</prop>
+				<prop key="hibernate.query.substitutions">true 1, false 0, yes 'Y', no 'N'</prop>
+				<prop key="hibernate.id.new_generator_mappings">true</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+
+				<prop key="hibernate.multiTenancy">DATABASE</prop>
+				<prop key="hibernate.connection.datasource">java:jboss/ontrack/jdbc/MAIN</prop>
+				<prop key="hibernate.multi_tenant.datasource.identifier_for_any">TH</prop>
+				<prop key="hibernate.multi_tenant_connection_provider">org.hibernate.service.jdbc.connections.spi.DataSourceBasedMultiTenantConnectionProviderImpl</prop>
+			</props>
+		</property>
+		<property name="mappingLocations">
+			<list>
+				<!-- Filters First -->
+				<!-- Then Mappings -->
+				<value>classpath:frameworks/security/oauth2/data/OAuth2.hbm.xml</value>
+				<value>classpath:frameworks/security/core/data/CoreSecurity.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<aop:config>
+		<aop:pointcut id="genericReadAccessOperation" expression="execution(* frameworks.access.*Access.*(..))"/>
+		<aop:pointcut id="accessOperation" expression="execution(* frameworks..app.*Access.*(..))"/>
+
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="genericReadAccessOperation"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="accessOperation"/>
+	</aop:config>
+	<!-- 
+	 - Base Data Access
+	 -->
+	<bean id="springAuthAccess" class="frameworks.security.authentication.SpringAuthAccessImpl"/>
+	<bean name="hibernateDataAccess" abstract="true"
+			class="frameworks.access.HibernateDataAccess" 
+			p:sessionFactory-ref="defaultSessionFactory"
+			p:authAccess-ref="springAuthAccess"
+	/>
+
+</beans>
