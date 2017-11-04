@@ -58,7 +58,7 @@
         <bean parent="RelyingPartyByName" c:relyingPartyIds="#{{'https://tapp.frameworks.local:9443/wisp/saml/metadata'}}">
             <property name="profileConfigurations">
                 <list>
-                    <bean parent="SAML2.SSO" p:authenticationFlows="#{{'Test'}}" />
+                    <bean parent="SAML2.SSO" p:authenticationFlows="#{{'Preauth'}}" />
                 </list>
             </property>
         </bean>
@@ -66,7 +66,7 @@
 		<bean parent="RelyingPartyByName" c:relyingPartyIds="#{{'https://sp.testshib.org/shibboleth-sp'}}">
 			<property name="profileConfigurations">
 				<list>
-                <bean parent="SAML2.SSO" p:authenticationFlows="#{{'Test'}}" p:postAuthenticationFlows="attribute-release" />
+                <bean parent="SAML2.SSO" p:authenticationFlows="#{{'Preauth'}}" p:postAuthenticationFlows="attribute-release" />
                 <ref bean="SAML2.Logout" />
                 <ref bean="SAML2.AttributeQuery" />
                 <ref bean="SAML2.ArtifactResolution" />

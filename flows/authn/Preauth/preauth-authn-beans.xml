@@ -19,15 +19,15 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
    
-    <import resource="../../../conf/authn/test-authn-config.xml" />
+    <import resource="../../../conf/authn/preauth-authn-config.xml" />
 
-    <bean id="ValidateExternalAuthentication"
+    <bean id="ValidatePreauthAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
-        p:metricName="net.shibboleth.idp.authn.test"
-        p:matchExpression="#{getObject('shibboleth.authn.Test.matchExpression')}"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Test.addDefaultPrincipals') ?: true}"
-        p:classifiedMessages-ref="shibboleth.authn.Test.ClassifiedMessageMap"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.Test.resultCachingPredicate')}" />
+        p:metricName="net.shibboleth.idp.authn.Preauth"
+        p:matchExpression="#{getObject('shibboleth.authn.Preauth.matchExpression')}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Preauth.addDefaultPrincipals') ?: true}"
+        p:classifiedMessages-ref="shibboleth.authn.Preauth.ClassifiedMessageMap"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.Preauth.resultCachingPredicate')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"

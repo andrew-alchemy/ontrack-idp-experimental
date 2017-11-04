@@ -170,16 +170,6 @@
 		<url-pattern>/Authn/External/*</url-pattern>
     </servlet-mapping>
   
-  	<!-- AST -->
-  	<servlet>
-  		<servlet-name>TestAuthHandler</servlet-name>
-  		<jsp-file>/WEB-INF/jsp/testAuthProvider.jsp</jsp-file>
-  	</servlet>
-  	<servlet-mapping>
-  		<servlet-name>TestAuthHandler</servlet-name>
-  		<url-pattern>/Authn/Test</url-pattern>
-    </servlet-mapping>
-    
     
 	<servlet>
 		<servlet-name>OntrackHandler</servlet-name>

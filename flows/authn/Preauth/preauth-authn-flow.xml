@@ -19,10 +19,10 @@
 	</on-start>
   
   	<!--  here is the work  -->
-    <action-state id="ValidateExternalAuthentication">
+    <action-state id="ValidatePreauthAuthentication">
     	<!-- if we are already authenticated then use the name as the Principal for SAML otherwise set the NoCredentials error  -->
 		<evaluate expression="currentUser == null ? flowScope.extContext.setAuthnError( 'NoCredentials' ) : flowScope.extContext.setPrincipalName( currentUser.name )" />
-        <evaluate expression="ValidateExternalAuthentication" />
+        <evaluate expression="ValidatePreauthAuthentication" />
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
 
@@ -38,6 +38,6 @@
         <transition on="SubjectCanonicalizationError" to="ReselectFlow" />
     </subflow-state>
 
-    <bean-import resource="test-authn-beans.xml" />
+    <bean-import resource="preauth-authn-beans.xml" />
 
 </flow>

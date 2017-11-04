@@ -17,10 +17,10 @@
     You would normally only unset this if you plan to use the authnMethodHeader servlet parameter to
     supply authentication method string(s) from the external authentication system.
     -->
-    <util:constant id="shibboleth.authn.Test.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE" />
+    <util:constant id="shibboleth.authn.Preauth.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE" />
 
     <!--
-    <bean id="shibboleth.authn.Test.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
+    <bean id="shibboleth.authn.Preauth.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
         c:_0="^(.+)@example\.edu]$" />
     -->
 
@@ -34,7 +34,7 @@
     
     If you want to "fall-through" to other login flows, include a mapping to "ReselectFlow".
     -->
-    <util:map id="shibboleth.authn.Test.ClassifiedMessageMap">
+    <util:map id="shibboleth.authn.Preauth.ClassifiedMessageMap">
         <entry key="NoCredentials">
             <list>
                 <value>NoCredentials</value>
