@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:security="http://www.springframework.org/schema/security"
+		xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:c="http://www.springframework.org/schema/c"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+			http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd"
+		default-lazy-init="true">
+
+ 
+	<security:http realm="ONTrack Bridge" pattern="/ontracksso" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
+		<security:intercept-url pattern="/ontracksso" access="IS_AUTHENTICATED_FULLY" requires-channel="https"/>
+		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />	<!-- OAuth2 injection -->
+		<security:access-denied-handler ref="oauthAccessDeniedHandler" />		
+		<security:headers>
+			<security:cache-control/>
+		</security:headers>
+	</security:http>
+
+	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint"/>
+
+	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler"/>
+
+	<oauth2:client-details-service id="clientDetails">
+		<oauth2:client client-id="ui.ontrack.frameworks.ca" scope="read,write,trust,general" authorized-grant-types="password,refresh_token" autoapprove="true"/>
+		<oauth2:client client-id="tapp.frameworks.ca" scope="read,write,trust,general" authorized-grant-types="password,refresh_token" autoapprove="true"/>
+	</oauth2:client-details-service>
+	
+	<oauth2:resource-server id="resourceServerFilter" resource-id="springsec" token-services-ref="tokenServices" />
+
+	<bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.DefaultTokenServices"
+			p:tokenStore-ref="tokenStore"
+			p:accessTokenValiditySeconds="43200"
+			p:supportRefreshToken="true"
+			p:clientDetailsService-ref="clientDetails"
+	/>
+	
+
+	<bean id="tokenStore" class="frameworks.security.oauth2.token.store.HibernateTokenStore">
+		<property name="accessTokenAccess">
+			<bean parent="hibernateDataAccess" class="frameworks.security.oauth2.app.AccessTokenAccessHibernateImpl"/>
+		</property>
+		<property name="refreshTokenAccess">
+			<bean parent="hibernateDataAccess" class="frameworks.security.oauth2.app.RefreshTokenAccessHibernateImpl"/>
+		</property>
+	</bean>
+	
+	<!-- 
+	<bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.JdbcTokenStore"	
+			c:_0-ref="shibboleth.JPAStorageService.DataSource"	
+			p:insertAccessTokenSql="insert into oauth2.access_token (token_id, token, authentication_id, user_name, client_id, authentication, refresh_token, created_datetime) values (?, ?, ?, ?, ?, ?, ?, getdate())"
+			p:selectAccessTokenSql="select token_id, token from oauth2.access_token with (nolock) where token_id = ?"
+			p:selectAccessTokenAuthenticationSql="select token_id, authentication from oauth2.access_token with (nolock) where token_id = ?"
+			p:selectAccessTokenFromAuthenticationSql="select token_id, token from oauth2.access_token with (nolock) where authentication_id = ?"
+			p:selectAccessTokensFromUserNameAndClientIdSql="select token_id, token from oauth2.access_token with (nolock) where user_name = ? and client_id = ?"
+			p:selectAccessTokensFromUserNameSql="select token_id, token from oauth2.access_token with (nolock) where user_name = ?"
+			p:selectAccessTokensFromClientIdSql="select token_id, token from oauth2.access_token with (nolock) where client_id = ?"
+			p:deleteAccessTokenSql="delete from oauth2.access_token where token_id = ?"
+			p:insertRefreshTokenSql="insert into oauth2.refresh_token (token_id, token, authentication, created_datetime) values (?, ?, ?, getdate())"
+			p:selectRefreshTokenSql="select token_id, token from oauth2.refresh_token with (nolock) where token_id = ?"
+			p:selectRefreshTokenAuthenticationSql="select token_id, authentication from oauth2.refresh_token with (nolock) where token_id = ?"
+			p:deleteRefreshTokenSql="delete from oauth2.refresh_token where token_id = ?"
+			p:deleteAccessTokenFromRefreshTokenSql="delete from oauth2.access_token where refresh_token = ?"
+	/>
+ 	-->
+
+	<security:authentication-manager alias="authenticationManager"/>
+
+</beans>
