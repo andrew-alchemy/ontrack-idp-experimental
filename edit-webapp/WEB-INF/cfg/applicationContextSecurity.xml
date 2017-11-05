@@ -14,8 +14,8 @@
 		default-lazy-init="true">
 
  
-	<security:http realm="ONTrack Bridge" pattern="/ontracksso" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
-		<security:intercept-url pattern="/ontracksso" access="IS_AUTHENTICATED_FULLY" requires-channel="https"/>
+	<security:http realm="ONTrack Bridge" pattern="/ontracksso/*" entry-point-ref="oauthAuthenticationEntryPoint" create-session="never">
+		<security:intercept-url pattern="/ontracksso/*" access="IS_AUTHENTICATED_FULLY" requires-channel="https"/>
 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />	<!-- OAuth2 injection -->
 		<security:access-denied-handler ref="oauthAccessDeniedHandler" />		
 		<security:headers>
@@ -72,4 +72,17 @@
 
 	<security:authentication-manager alias="authenticationManager"/>
 
+
+	<!--
+	  - Authorization decision control... this is bog standard 
+	  -->
+	<bean id="httpRequestAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<property name="allowIfAllAbstainDecisions" value="false"/>
+		<property name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.access.annotation.Jsr250Voter"/>
+				<bean class="org.springframework.security.access.vote.RoleVoter" p:rolePrefix=""/>
+			</list>
+		</property>
+	</bean>
 </beans>

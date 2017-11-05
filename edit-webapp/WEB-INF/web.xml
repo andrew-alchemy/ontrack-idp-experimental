@@ -100,11 +100,11 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>TenantContextFilter</filter-name>
-        <url-pattern>/ontracksso</url-pattern>
+        <url-pattern>/ontracksso/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/ontracksso</url-pattern>
+        <url-pattern>/ontracksso/*</url-pattern>
     </filter-mapping>
 	
 	
@@ -127,7 +127,7 @@
         <url-pattern>/status</url-pattern>
         <url-pattern>/profile/*</url-pattern>
     </servlet-mapping>
-
+    
     <!-- Servlet protected by container used for RemoteUser authentication -->
     <servlet>
         <servlet-name>RemoteUserAuthHandler</servlet-name>
@@ -160,8 +160,19 @@
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
     
-    <!-- AST -->
-	<servlet>
+        
+    <!-- Our bridge application code -->    
+    <servlet>
+        <servlet-name>ontracksso</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>10</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>ontracksso</servlet-name>
+        <url-pattern>/ontracksso/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
 		<servlet-name>ExternalUserAuthHandler</servlet-name>
 		<jsp-file>/WEB-INF/jsp/externalAuthProvider.jsp</jsp-file>
 	</servlet>
@@ -170,17 +181,6 @@
 		<url-pattern>/Authn/External/*</url-pattern>
     </servlet-mapping>
   
-    
-	<servlet>
-		<servlet-name>OntrackHandler</servlet-name>
-		<jsp-file>/WEB-INF/jsp/ontrack.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>OntrackHandler</servlet-name>
-		<url-pattern>/ontracksso</url-pattern>
-    </servlet-mapping>
-    
-    
     <!-- Send servlet errors through the IdP's MVC error handling. -->
     <error-page>
         <exception-type>net.shibboleth.idp.authn.ExternalAuthenticationException</exception-type>
