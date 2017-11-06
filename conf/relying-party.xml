@@ -22,8 +22,11 @@
     <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <list>
-            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
-            <bean parent="SAML2.SSO" p:authenticationFlows="#{{'Password'}}" p:postAuthenticationFlows="attribute-release" p:encryptAssertions="false"/>
+            <bean parent="SAML2.SSO" 
+            	p:authenticationFlows="#{{'Password'}}" 
+            	p:postAuthenticationFlows="attribute-release" 
+            	p:encryptAssertions="false" 
+            	p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress"/>
             </list>
         </property>
     </bean>
