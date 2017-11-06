@@ -2,7 +2,6 @@ package frameworks.jaas;
 
 import java.security.Principal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,28 +9,31 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
+import javax.sql.DataSource;
 
 /*
 * Base class for a variety of simple login modules that simply authenticate a user against some database of user credentials.
 *
 */
 public class JDBCLoginModule extends BaseLoginModule {
-	String dbDriver;
-	String dbURL;
+	//String dbDriver;
+	String jndiURL;
 	String userQuery;
 	String roleQuery;
 	
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState,  Map<String, ?> options) {
         super.initialize(subject, callbackHandler, sharedState, options);
 
-        dbDriver = getOption("dbDriver", null);
-        if (dbDriver == null) throw new Error("No database driver named (dbDriver=?)");
+        //dbDriver = getOption("dbDriver", null);
+        //if (dbDriver == null) throw new Error("No database driver named (dbDriver=?)");
         
-        dbURL = getOption("dbURL", null);
-        if (dbURL == null) throw new Error("No database URL specified (dbURL=?)");
+        jndiURL = getOption("jndiURL", null);
+        if (jndiURL == null) throw new Error("No database JNDI URL specified (jndiURL=?)");
 
         userQuery = getOption("userQuery", "select password, user_id, role_cd, name_first, name_last, email from aftims.v_security_user_active where username=?");
         roleQuery = getOption("roleQuery", "select right_cd from aftims.v_security_user_right where username=?");
@@ -59,8 +61,11 @@ public class JDBCLoginModule extends BaseLoginModule {
         ResultSet roleResultSet = null;
 
 		try {
-			Class.forName(dbDriver);
-			connection = DriverManager.getConnection(dbURL);
+			Context ctx = new InitialContext();
+			DataSource ds = (DataSource)ctx.lookup(jndiURL);
+			connection = ds.getConnection();
+			//Class.forName(dbDriver);
+			//connection = DriverManager.getConnection(dbURL);
 			// Retrieve user credentials from database.
 			passwordStatement = connection.prepareStatement(userQuery);
 			passwordStatement.setString(1, username);
