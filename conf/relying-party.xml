@@ -23,6 +23,7 @@
         <property name="profileConfigurations">
             <list>
             <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
+            <bean parent="SAML2.SSO" p:authenticationFlows="#{{'Password'}}" p:postAuthenticationFlows="attribute-release" p:encryptAssertions="false"/>
             </list>
         </property>
     </bean>
