@@ -9,7 +9,28 @@
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
   
 	<!-- predicate beans to use in activationConditionRef attributes to activate based on SP -->	
-    <bean id="THActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'Sisense','https://sp.testshib.org/shibboleth-sp','https://tapp.frameworks.local:9443/wisp/saml/metadata'}}"/>
-    <bean id="BKActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidate="https://sp_for_bk.example.org"/>
+    <bean id="xxxTHActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'Sisense','https://sp.testshib.org/shibboleth-sp','https://tapp.frameworks.local:9443/wisp/saml/metadata'}}"/>
+    <bean id="xxxBKActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidate="https://sp_for_bk.example.org"/>
+ 	
+ 	 <!-- Parent bean for predicates that act on the Tenant code -->
+    <bean id="shibboleth.Conditions.Tenant" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="frameworks.TenantLookup.Subject"
+                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        </constructor-arg>
+    </bean>
+    <!-- get the tenant code from the Subject -->
+    <bean id="frameworks.TenantLookup.Subject" class="frameworks.authn.context.SubjectContextTenantLookup" p:attributeValuesFunction-ref="frameworks.TenantLookup.Principal"/>
+    <!-- function to get the values of an IdpAttributePrincipal : needs the name of the attribute -->
+	<bean id="frameworks.TenantLookup.Principal" class="net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction">
+		<property name="attributeName" value="Tenant"/>
+	</bean>   
+
+	<!-- now we can define activation strategies (for datasources) based on tenant -->
+	<bean id="THActivationCondition" parent="shibboleth.Conditions.Tenant" c:collection="#{{'TH'}}" />
+	<bean id="BKActivationCondition" parent="shibboleth.Conditions.Tenant" c:collection="#{{'BK'}}" />
  	<bean id="SisenseActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidate="Sisense"/>
+
 </beans>

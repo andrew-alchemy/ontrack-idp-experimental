@@ -17,6 +17,7 @@
 		<PolicyRequirementRule xsi:type="ANY" />
 		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="uid" permitAny="true"/>
+		<AttributeRule attributeID="Tenant" permitAny="true"/>
 	</AttributeFilterPolicy>
 
 	<AttributeFilterPolicy id="sisenseAttributes">

@@ -156,6 +156,12 @@
     </AttributeDefinition>
 
 
+	<!-- the Tenant -->
+	<AttributeDefinition xsi:type="SubjectDerivedAttribute" id="Tenant" principalAttributeName="Tenant">
+		<AttributeEncoder xsi:type="SAML2String" name="Tenant" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic" friendlyName="Tenant" />
+	</AttributeDefinition>
+
+	<!-- used to define group membership for Sisense -->
     <AttributeDefinition id="memberOf" xsi:type="Simple" sourceAttributeID="o" activationConditionRef="SisenseActivationCondition">
  		<Dependency ref="shibboleth.AttributeSource.TH" />
  		<Dependency ref="shibboleth.AttributeSource.BK" />
