@@ -61,6 +61,8 @@
     <logger name="org.eclipse.jetty" level="${idp.loglevel.container:-ERROR}"/>
 
 
+	<logger name="frameworks" level="${idp.loglevel.idp:-DEBUG}"/>
+
     <!-- =========================================================== -->
     <!-- ============== Low Level Details or Changes =============== -->
     <!-- =========================================================== -->
