@@ -16,12 +16,15 @@
 		<evaluate 
 			expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(), true)"
 			result="flowScope.extContext" />
+		<evaluate expression="externalContext.getRequestMap().get('ONTRACK_TENANT')" result="flowScope.tenant"/>
+		<evaluate expression="externalContext.getRequestMap().get('ONTRACK_SUBJECT')" result="flowScope.subject"/>
 	</on-start>
   
   	<!--  here is the work  -->
     <action-state id="ValidatePreauthAuthentication">
     	<!-- if we are already authenticated then use the name as the Principal for SAML otherwise set the NoCredentials error  -->
-		<evaluate expression="currentUser == null ? flowScope.extContext.setAuthnError( 'NoCredentials' ) : flowScope.extContext.setPrincipalName( currentUser.name )" />
+		<!-- <evaluate expression="currentUser == null ? flowScope.extContext.setAuthnError( 'NoCredentials' ) : flowScope.extContext.setPrincipalName( currentUser.name )" />  -->
+		<evaluate expression="flowScope.subject == null ? flowScope.extContext.setAuthnError( 'NoCredentials' ) : flowScope.extContext.setSubject( flowScope.subject )" />
         <evaluate expression="ValidatePreauthAuthentication" />
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />

@@ -1,6 +1,14 @@
 package frameworks.sso.app;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.annotation.security.PermitAll;
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -12,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import frameworks.security.authentication.TenantContextHolder;
 import frameworks.security.core.ONTrackUserDetails;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 /**
  * The bridge code in the IDP application that is secured by OAuth
@@ -74,12 +86,32 @@ public class SSOController {
 			log.debug("User username:" + onUser.getUsername() );
 			log.debug("User roleCd:" + onUser.getRoleCd() );
 			log.debug("User dagId:" + onUser.getDagId());
+			
+			//this is critical so that SWF can see the tenant
+			//It can access it via EL "externalContext.getRequestMap().get('ONTRACK_TENANT')"
+			request.setAttribute("ONTRACK_TENANT", tenant);
+
+			//Username principal
+			Set<Principal> principals = new HashSet<Principal>();
+			principals.add( new UsernamePrincipal( onUser.getUsername() ) );
+
+			//IdpAttribute principals
+			IdPAttribute attr = new IdPAttribute("Tenant");
+			List<StringAttributeValue> attrValues = new ArrayList<StringAttributeValue>(1);
+			attrValues.add( new StringAttributeValue(tenant) );
+			attr.setValues( attrValues );
+
+			principals.add( new IdPAttributePrincipal(attr) );
+			
+			
+			Subject subject = new Subject(false, principals, Collections.emptySet(), Collections.emptySet());
+			request.setAttribute("ONTRACK_SUBJECT", subject);
+			
 		} else {
 			log.debug("Unrecognized user:" + principal );
 		}
-	
-		//request.getRequestDispatcher(IDP_UNSOLICITED_SSO_URI).forward(request, response);
 		
+		//request.getRequestDispatcher(IDP_UNSOLICITED_SSO_URI).forward(request, response);
 
 		return "forward:/"+IDP_UNSOLICITED_SSO_URI;//see note above about trying to add parameters
 	}
