@@ -19,6 +19,13 @@
 		<AttributeRule attributeID="uid" permitAny="true"/>
 	</AttributeFilterPolicy>
 
+	<AttributeFilterPolicy id="sisenseAttributes">
+		<PolicyRequirementRule xsi:type="Requester" value="Sisense" />
+		<AttributeRule attributeID="memberOf" permitAny="true"/>
+	</AttributeFilterPolicy>
+	
+	
+
     <!-- Release some attributes to an SP. -->
     <AttributeFilterPolicy id="example1">
         <PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />

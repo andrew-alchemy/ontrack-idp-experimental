@@ -9,7 +9,7 @@
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
   
 	<!-- predicate beans to use in activationConditionRef attributes to activate based on SP -->	
-    <bean id="THActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'https://sp.testshib.org/shibboleth-sp','https://tapp.frameworks.local:9443/wisp/saml/metadata'}}"/>
+    <bean id="THActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'Sisense','https://sp.testshib.org/shibboleth-sp','https://tapp.frameworks.local:9443/wisp/saml/metadata'}}"/>
     <bean id="BKActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidate="https://sp_for_bk.example.org"/>
- 
+ 	<bean id="SisenseActivationCondition" parent="shibboleth.Conditions.RelyingPartyId" c:candidate="Sisense"/>
 </beans>
