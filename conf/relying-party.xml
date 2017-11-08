@@ -52,13 +52,21 @@
     </bean>
 
     <!-- Container for any overrides you want to add. -->
-
     <util:list id="shibboleth.RelyingPartyOverrides">
-    
-        <!--
-        Override example that identifies a single RP by name and configures it
-        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
-        -->
+
+		<!-- Sisense: (this SP has no metadata) SAML2 SSO , no encryption, Password auth (for now) and email for NameID  ()-->
+		<bean parent="RelyingPartyByName" c:relyingPartyIds="#{{'Sisense'}}">
+			<property name="profileConfigurations">
+				<list>
+				<bean parent="SAML2.SSO" 
+	            	p:authenticationFlows="#{{'Password'}}" 
+	            	p:postAuthenticationFlows="attribute-release" 
+	            	p:encryptAssertions="false" 
+	            	p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress"/>
+				</list>
+			</property>
+        </bean>    
+
         <bean parent="RelyingPartyByName" c:relyingPartyIds="#{{'https://tapp.frameworks.local:9443/wisp/saml/metadata'}}">
             <property name="profileConfigurations">
                 <list>
