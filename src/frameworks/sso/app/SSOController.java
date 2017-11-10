@@ -42,6 +42,8 @@ public class SSOController {
 	
 	//the unsolicited SSO endpoint
 	final String IDP_UNSOLICITED_SSO_URI = "/profile/SAML2/Unsolicited/SSO";
+	//the request attribute name used for the preauthenticated Subject 
+	final String ONTRACK_SUBJECT = "ONTRACK_SUBJECT";
 	
 	/**
 	 * Because the request is now buried in a wrapper we can NOT add the parameters in this code as part of the forward
@@ -87,9 +89,12 @@ public class SSOController {
 			log.debug("User roleCd:" + onUser.getRoleCd() );
 			log.debug("User dagId:" + onUser.getDagId());
 			
-			//this is critical so that SWF can see the tenant
-			//It can access it via EL "externalContext.getRequestMap().get('ONTRACK_TENANT')"
-			request.setAttribute("ONTRACK_TENANT", tenant);
+
+			//This option can be used to tunnel data through into SWF 
+			//SWF can access it via EL "externalContext.getRequestMap().get('ONTRACK_SUBJECT')"
+			//request.setAttribute("ONTRACK_TENANT", tenant);
+			
+			//**HOWEVER I am using the idpPrincipal as there is already support for this in AttributeDefinition as xsi:type="SubjectDerivedAttribute" 
 
 			//Username principal
 			Set<Principal> principals = new HashSet<Principal>();
@@ -105,7 +110,9 @@ public class SSOController {
 			
 			
 			Subject subject = new Subject(false, principals, Collections.emptySet(), Collections.emptySet());
-			request.setAttribute("ONTRACK_SUBJECT", subject);
+			//I now use this precomposed Subject as the preauth to tunnel data through into SWF 
+			//It can access it via EL "externalContext.getRequestMap().get('ONTRACK_SUBJECT')"
+			request.setAttribute(ONTRACK_SUBJECT, subject);
 			
 		} else {
 			log.debug("Unrecognized user:" + principal );
