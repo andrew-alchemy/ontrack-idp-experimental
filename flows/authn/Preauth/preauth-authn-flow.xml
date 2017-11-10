@@ -16,7 +16,6 @@
 		<evaluate 
 			expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(), true)"
 			result="flowScope.extContext" />
-		<evaluate expression="externalContext.getRequestMap().get('ONTRACK_TENANT')" result="flowScope.tenant"/>
 		<evaluate expression="externalContext.getRequestMap().get('ONTRACK_SUBJECT')" result="flowScope.subject"/>
 	</on-start>
   
