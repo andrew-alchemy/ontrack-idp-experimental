@@ -14,7 +14,7 @@
 			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- ******************** Locale Related Configuration ************************ -->
-	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver"/>
+	<bean id="localeResolver" class="frameworks.core.i18n.web.CascadingLocaleResolver"/>
 
 	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" p:alwaysUseFullPath="true"/>
 

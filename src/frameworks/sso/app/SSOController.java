@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.annotation.security.PermitAll;
@@ -63,6 +64,7 @@ public class SSOController {
 	@PermitAll
 	public String doUnsolicitedSSO(
 			Authentication auth,
+			Locale loc,
 			HttpServletRequest request,
 			@RequestParam(value="providerId", required=true) String spEntityId,
 			@RequestParam(value="target", required=false) String relayState,
@@ -101,13 +103,11 @@ public class SSOController {
 			principals.add( new UsernamePrincipal( onUser.getUsername() ) );
 
 			//IdpAttribute principals
-			IdPAttribute attr = new IdPAttribute("Tenant");
-			List<StringAttributeValue> attrValues = new ArrayList<StringAttributeValue>(1);
-			attrValues.add( new StringAttributeValue(tenant) );
-			attr.setValues( attrValues );
-
-			principals.add( new IdPAttributePrincipal(attr) );
-			
+			//tenant
+			principals.add(  createAttributePrincipal("Tenant", tenant)  );
+			//locale
+			principals.add(  createAttributePrincipal("Locale", loc.toString())  );
+		
 			
 			Subject subject = new Subject(false, principals, Collections.emptySet(), Collections.emptySet());
 			//I now use this precomposed Subject as the preauth to tunnel data through into SWF 
@@ -121,6 +121,14 @@ public class SSOController {
 		//request.getRequestDispatcher(IDP_UNSOLICITED_SSO_URI).forward(request, response);
 
 		return "forward:/"+IDP_UNSOLICITED_SSO_URI;//see note above about trying to add parameters
+	}
+	
+	private IdPAttributePrincipal createAttributePrincipal( String name, String value ) {
+		IdPAttribute attr = new IdPAttribute( name );
+		List<StringAttributeValue> attrValues = new ArrayList<StringAttributeValue>(1);
+		attrValues.add( new StringAttributeValue(value) );
+		attr.setValues( attrValues );
+		return new IdPAttributePrincipal(attr);
 	}
 }
 
