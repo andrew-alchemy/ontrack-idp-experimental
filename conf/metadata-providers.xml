@@ -70,11 +70,11 @@
 			metadataURL="http://www.testshib.org/metadata/testshib-providers.xml"/>      
 
 
-		<MetadataProvider id="HTTPMetadataWISP"
+		<!-- <MetadataProvider id="HTTPMetadataWISP"
 			xsi:type="FileBackedHTTPMetadataProvider"
 			backingFile="%{idp.home}/metadata/wisp-local.xml"
 			metadataURL="https://tapp.frameworks.local:9443/wisp/saml/metadata"/>
-			
+		 -->	
 		<!-- <MetadataProvider id="LocalMetadata" 
 			xsi:type="FilesystemMetadataProvider"     
 			xmlns="urn:mace:shibboleth:2.0:metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"     
@@ -82,6 +82,23 @@
 			failFastInitialization="true"     
 			metadataFile="%{idp.home}/metadata/spring_saml_metadata.xml"/>
 		 -->
+		 
+		 
+		<MetadataProvider xmlns="urn:mace:shibboleth:2.0:metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd"
+		    id="dynamicWellKnown" xsi:type="DynamicHTTPMetadataProvider">
+		    <!--
+		      Use the well-known location strategy to get SP metadata. The
+		      entityID is not configured here; it is determined from the
+		      AuthnRequest's Issuer element, as sent by the requester.
+		       
+		      In this case, the entityID MUST be in the form of a URL (rather
+		      than a URN). It is STRONGLY RECOMMENDED that https URLs be used
+		      to protect against man-in-the-middle attacks.
+		    -->
+		    <!-- AST this attribute is not on the Spring SP metadata <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P14D"/>  -->
+		</MetadataProvider>
+		
 	</MetadataProvider>          
     
 </MetadataProvider>
