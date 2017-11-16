@@ -191,14 +191,11 @@
 		<!-- <ContainerManagedConnection resourceName="JNDIConnector"> -->
 		<QueryTemplate>
 		<![CDATA[
-		;with p (user_id, role_cd, name_first, name_last, country_cd, username) as (
-			select user_id, role_cd, name_first, name_last, 'CA' as country_cd, username 
-			from usr.security_user su
-			inner join location.location l ON l.id = su.home_location_id where su.status_cd='A'
-			union
-			select 1, 'SYS', 'John', 'Doe', 'CA', 'johndoe' 
-		)
-		select * from p where username='$resolutionContext.principal'
+		select user_id, role_cd, name_first, name_last, l.country_cd as country_cd, username 
+		from usr.security_user su with (nolock)
+		inner join location.location l with (nolock) ON l.id = su.home_location_id 
+		where su.status_cd='A'
+		and su.username='$resolutionContext.principal'
 		]]>
 		</QueryTemplate>
 
@@ -216,14 +213,11 @@
 		<!-- <ContainerManagedConnection resourceName="JNDIConnector"> -->
 		<QueryTemplate>
 		<![CDATA[
-		;with p (user_id, role_cd, name_first, name_last, country_cd, username) as (
-			select user_id, role_cd, name_first, name_last, 'US' as country_cd, username 
-			from usr.security_user su
-			inner join location.location l ON l.id = su.home_location_id where su.status_cd='A'
-			union
-			select 1, 'SYS', 'John', 'Doe', 'CA', 'johndoe' 
-		)
-		select * from p where username='$resolutionContext.principal'
+		select user_id, role_cd, name_first, name_last, l.country_cd as country_cd, username 
+		from usr.security_user su with (nolock)
+		inner join location.location l with (nolock) ON l.id = su.home_location_id 
+		where su.status_cd='A'
+		and su.username='$resolutionContext.principal'
 		]]>
 		</QueryTemplate>
 
@@ -235,27 +229,4 @@
 	</DataConnector>
     
     
-	<DataConnector id="myDatabase" xsi:type="RelationalDatabase">
-	   <BeanManagedConnection>shibboleth.JPAStorageService.DataSource</BeanManagedConnection>
-	   <QueryTemplate>
-		   <![CDATA[
-		   ;with p (user_id, role_cd, name_first, name_last, email, country_cd, username) as (
-			 select user_id, role_cd, name_first, name_last, email, 'CA' as country_cd, username from aftims.v_security_user_active 
-			 union
-			 select 1, 'SYS', 'John', 'Doe', 'jdoe@ipsrus.com', 'CA', 'jdoe' 
-			)
-			select * from p where username='$resolutionContext.principal'
-		   ]]>
-	   </QueryTemplate>
-
-		<Column columnName="user_id" attributeID="role_cd" />
-		<Column columnName="role_cd" attributeID="employeeType" />
-		<Column columnName="name_first" attributeID="givenName" />
-		<Column columnName="name_last" attributeID="sn" />
-		<Column columnName="email" attributeID="mail" />
-		<Column columnName="country_cd" attributeID="c" />
-
-	   <ResultCache elementTimeToLive="PT10S"/>
-	</DataConnector>
-
 </AttributeResolver>
