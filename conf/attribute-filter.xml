@@ -13,111 +13,65 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
+	<!-- We will always releas these attributes by default unless some subsequent rule denies -->
 	<AttributeFilterPolicy id="publicAttributes">
 		<PolicyRequirementRule xsi:type="ANY" />
-		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="uid" permitAny="true"/>
-		<AttributeRule attributeID="Tenant" permitAny="true"/>
+		<AttributeRule attributeID="organization" permitAny="true"/>
+		<AttributeRule attributeID="country" permitAny="true"/>
+		<AttributeRule attributeID="preferredLanguage" permitAny="true"/>
 	</AttributeFilterPolicy>
 
+	<!-- Sisense BI needs mail and memberOf -->
 	<AttributeFilterPolicy id="sisenseAttributes">
 		<PolicyRequirementRule xsi:type="Requester" value="Sisense" />
+		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="memberOf" permitAny="true"/>
 	</AttributeFilterPolicy>
 	
-	
-
-    <!-- Release some attributes to an SP. -->
-    <AttributeFilterPolicy id="example1">
-        <PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />
-
-        <AttributeRule attributeID="uid">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-        
-		<AttributeRule attributeID="mail">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="surname">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="givenName">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="country">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="preferredLanguage">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="employeeType">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-        
-		<AttributeRule attributeID="organization">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-        
-    </AttributeFilterPolicy>
-
-
-
-    <!-- Release some attributes to an SP. -->
+    <!-- This is just playime with the test SP. -->
     <AttributeFilterPolicy id="tapp_sp">
 		<PolicyRequirementRule xsi:type="OR">
             <Rule xsi:type="Requester" value="https://tapp.frameworks.local:9443/wisp/saml/metadata" />
             <Rule xsi:type="Requester" value="https://another.example.org/shibboleth" />
         </PolicyRequirementRule>
 
-        <AttributeRule attributeID="uid">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-        
-		<AttributeRule attributeID="mail">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
+		<AttributeRule attributeID="mail" permitAny="true"/>
+		<AttributeRule attributeID="surname" permitAny="true"/>
+		<AttributeRule attributeID="givenName" permitAny="true"/>
 
-		<AttributeRule attributeID="surname">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="givenName">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="country">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
-		<AttributeRule attributeID="preferredLanguage">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-
+		<!-- an example of how to use logic and value : this says only release the values ASSOCIATE, REST_MGR -->
 		<AttributeRule attributeID="employeeType">
-			<PermitValueRule xsi:type="ANY" />
+			<PermitValueRule xsi:type="OR">
+				<Rule xsi:type="Value" value="ASSOCIATE" ignoreCase="true"/>
+				<Rule xsi:type="Value" value="REST_MGR" ignoreCase="true"/>
+			</PermitValueRule>
         </AttributeRule>
-        
-		<AttributeRule attributeID="organization">
-			<PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
-        
     </AttributeFilterPolicy>
+    
+    <!-- 
+    a rule that is based on an attribute value
+    In this case we can DENY surname and givenName attributes in Deutschland 
+    -->
+    <AttributeFilterPolicy id="gdpsr">
+    	<PolicyRequirementRule  xsi:type="Value" value="DE" attributeID="country" />
+    	<AttributeRule attributeID="surname">
+    		<DenyValueRule xsi:type="ANY" />
+    	</AttributeRule>
+    	<AttributeRule attributeID="givenName">
+    		<DenyValueRule xsi:type="ANY" />
+    	</AttributeRule>
+    </AttributeFilterPolicy>
+	
+    <!-- Release the non public attributes to testSHib SP . -->
+    <AttributeFilterPolicy id="example1">
+        <PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />
 
-    <!-- Release eduPersonAffiliation to two specific SPs. -->
-    <AttributeFilterPolicy id="example2">
-        <PolicyRequirementRule xsi:type="OR">
-            <Rule xsi:type="Requester" value="https://sp.example.org" />
-            <Rule xsi:type="Requester" value="https://another.example.org/shibboleth" />
-        </PolicyRequirementRule>
-
-        <AttributeRule attributeID="eduPersonScopedAffiliation">
-            <PermitValueRule xsi:type="ANY" />
-        </AttributeRule>
+		<AttributeRule attributeID="mail" permitAny="true"/>
+		<AttributeRule attributeID="surname" permitAny="true"/>
+		<AttributeRule attributeID="givenName" permitAny="true"/>
+		<AttributeRule attributeID="employeeType" permitAny="true"/>
+        
     </AttributeFilterPolicy>
 
 </AttributeFilterPolicyGroup>
