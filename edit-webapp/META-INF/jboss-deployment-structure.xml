@@ -1,0 +1,15 @@
+<jboss-deployment-structure>
+	<deployment>
+		<dependencies>
+			<module name="org.hibernate" slot="main" export="true" optional="false"/>
+			<module name="org.javassist" slot="main" export="true" optional="false"/>
+			<module name="org.apache.xerces" slot="main" export="true" optional="false"/>
+			<module name="org.apache.commons.collections" slot="main" export="true"/>
+		</dependencies>
+        <!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+        <exclusions>
+            <module name="org.slf4j" />
+            <module name="org.slf4j.impl" />
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>
