@@ -37,11 +37,17 @@
         <!--
         <ref bean="shibboleth.SAML2PersistentGenerator" />
         -->
+            
 		<!-- AST sisense is asking for this -->
         <bean parent="shibboleth.SAML2AttributeSourcedGenerator"
             p:format="urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress"
             p:attributeSourceIds="#{ {'mail'} }" />
                 
+		<!-- AST spring saml asks for this if metadataGenerator bean has p:nameID="EMAIL" -->
+        <bean parent="shibboleth.SAML2AttributeSourcedGenerator"
+            p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" 
+            p:attributeSourceIds="#{ {'mail'} }" />   
+             
     </util:list>
 
     <!-- SAML 1 NameIdentifier Generation -->
@@ -49,11 +55,10 @@
 
         <ref bean="shibboleth.SAML1TransientGenerator" />
 
-        <!--
+		<!-- spring saml asks for this  -->
         <bean parent="shibboleth.SAML1AttributeSourcedGenerator"
-            p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+            p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" 
             p:attributeSourceIds="#{ {'mail'} }" />
-        -->
                 
     </util:list>
     

@@ -13,9 +13,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
-	<!-- We will always releas these attributes by default unless some subsequent rule denies -->
+	<!-- We will always releas these attributes by default unless some subsequent rule denies (need mail for NameId email format requests)-->
 	<AttributeFilterPolicy id="publicAttributes">
 		<PolicyRequirementRule xsi:type="ANY" />
+		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="uid" permitAny="true"/>
 		<AttributeRule attributeID="organization" permitAny="true"/>
 		<AttributeRule attributeID="country" permitAny="true"/>
@@ -25,7 +26,6 @@
 	<!-- Sisense BI needs mail and memberOf -->
 	<AttributeFilterPolicy id="sisenseAttributes">
 		<PolicyRequirementRule xsi:type="Requester" value="Sisense" />
-		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="memberOf" permitAny="true"/>
 	</AttributeFilterPolicy>
 	
@@ -36,7 +36,6 @@
             <Rule xsi:type="Requester" value="https://another.example.org/shibboleth" />
         </PolicyRequirementRule>
 
-		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="surname" permitAny="true"/>
 		<AttributeRule attributeID="givenName" permitAny="true"/>
 
@@ -67,7 +66,6 @@
     <AttributeFilterPolicy id="example1">
         <PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />
 
-		<AttributeRule attributeID="mail" permitAny="true"/>
 		<AttributeRule attributeID="surname" permitAny="true"/>
 		<AttributeRule attributeID="givenName" permitAny="true"/>
 		<AttributeRule attributeID="employeeType" permitAny="true"/>
