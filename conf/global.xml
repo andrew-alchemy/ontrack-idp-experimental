@@ -73,11 +73,13 @@
 	    <property name="database" value="SQL_SERVER" />
 	</bean>
 	
-	<jee:jndi-lookup id="shibboleth.DataSource.TH" jndi-name="java:jboss/ontrack/jdbc/MAIN/TH"/>
+	<!-- add new tenant datasources here -->
 	<jee:jndi-lookup id="shibboleth.DataSource.BK" jndi-name="java:jboss/ontrack/jdbc/MAIN/BK"/>
+	<jee:jndi-lookup id="shibboleth.DataSource.TH" jndi-name="java:jboss/ontrack/jdbc/MAIN/TH"/>
+	<jee:jndi-lookup id="shibboleth.DataSource.PV" jndi-name="java:jboss/ontrack/jdbc/MAIN/PV"/>
 	
 	<!-- choose which one we want to be aliased as the default -->
-	<alias name="shibboleth.DataSource.TH" alias="shibboleth.JPAStorageService.DataSource"/>
+	<alias name="shibboleth.DataSource.BK" alias="shibboleth.JPAStorageService.DataSource"/>
 	
 	<!--
 	<bean id="shibboleth.JPAStorageService.DataSource"
